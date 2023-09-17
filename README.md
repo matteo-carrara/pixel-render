@@ -1,2 +1,2 @@
 # pixel-render
-WIP rendering engine written from scratch
+Just for fun, rendering engine written from scratch
