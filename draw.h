@@ -1,1 +1,1 @@
-void drawLine(SDL_Renderer* renderer);
+void drawLine(SDL_Renderer* renderer, int startx, int starty, int lenght, float slope);
