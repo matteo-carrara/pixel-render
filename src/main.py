@@ -29,15 +29,17 @@ void main() {
 """
 
 
-class MainProg:
+class RenderWindow:
     width, height = 800, 600
         
     def __init__(self):
         pass
     
-    def run(self):
+    def show(self):
         pygame.init()
+        
         self.window = pygame.display.set_mode((self.width, self.height), DOUBLEBUF | OPENGL)
+        
         self.shader_program = compileProgram(compileShader(vertex_shader, GL_VERTEX_SHADER), compileShader(fragment_shader, GL_FRAGMENT_SHADER))
         self.vao = glGenVertexArrays(1)
         self.vbo = glGenBuffers(1)
@@ -48,13 +50,14 @@ class MainProg:
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, None)
         glUseProgram(self.shader_program)
+        
         self.screenSize_loc = glGetUniformLocation(self.shader_program, "screenSize")
-        self.running = True
-        self.start_time = time.time()
         self._mainloop()
   
         
     def _mainloop(self):
+        self.running = True
+        self.start_time = time.time()
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -71,6 +74,7 @@ class MainProg:
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
             pygame.display.flip()
+            
         self._terminate()
  
         
@@ -78,6 +82,7 @@ class MainProg:
         glDeleteProgram(self.shader_program)
         glDeleteVertexArrays(1, [self.vao])
         glDeleteBuffers(1, [self.vbo])
+        
         pygame.quit()
         
 
@@ -86,8 +91,8 @@ class MainProg:
 
 
 
-m = MainProg()
-m.run()
+window = RenderWindow()
+window.show()
 
 
 
