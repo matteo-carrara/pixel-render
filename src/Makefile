@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = $(shell sdl2-config --cflags)
-LIBS = $(shell sdl2-config --libs)
+LIBS = $(shell sdl2-config --libs) -lGLEW -lglfw -lGL
 
 # List of source files
 SRCS = prog.c draw.c
