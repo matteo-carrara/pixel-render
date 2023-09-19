@@ -6,13 +6,14 @@ void main() {
 }
 """
 
-fragment_shader = """
+line_fragment_shader = """
 #version 330 core
 out vec4 fragColor;
-uniform vec2 screenSize;
 
+uniform vec2 screenSize;
 uniform float line_len;
 uniform float line_thick;
+
 
 void main() {
     vec2 uv = gl_FragCoord.xy / screenSize;
