@@ -1,3 +1,6 @@
 prog
 *.o
 .vs
+src/build/
+src/dist/
+src/main.spec
