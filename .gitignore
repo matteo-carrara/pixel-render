@@ -4,3 +4,4 @@ prog
 src/build/
 src/dist/
 src/main.spec
+__pycache__/
