@@ -34,6 +34,8 @@ class RenderWindow:
         with self.lock:
             self.ll = self.slider1.get()/100
             self.lt = self.slider2.get()/100
+            self.ll = self.ll if self.ll > 0 else 0.01
+            self.lt = self.lt if self.lt > 0 else 0.01
         print("Line lenght", self.ll, "line thickness", self.lt)
                
         
