@@ -1,5 +1,5 @@
 # pixel-render
-Just for fun, rendering engine written from scratch
+WIP just for fun, rendering pixels from scratch
 
 ## Installation
 You can either clone the repository and run the .py file inside src, or download the EXE bundle from the releases.
