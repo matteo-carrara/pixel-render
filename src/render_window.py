@@ -14,37 +14,57 @@ from shader import *
 
 class RenderWindow:
     width, height = 800, 600
-        
+    ll = 0.8
+    lt = 0.1
     def __init__(self):
-        pass
+        self.lock = threading.Lock()
     
+    def _set_modified(self, value):
+        with self.lock:
+            self.modified = value
+    
+    def _get_modified(self):
+        with self.lock:
+            return self.modified
+            
+    def button_click(self):
+        # This method will be called when the button is pressed
+        print("Button clicked!")
+        self._set_modified(True) 
+        with self.lock:
+            self.ll = self.slider1.get()/100
+            self.lt = self.slider2.get()/100
+        print("Line lenght", self.ll, "line thickness", self.lt)
+               
+        
     def _settingsWindow(self):
         self.root = tk.Tk()
         self.root.title("Parameter Controls")
         self.root.geometry("400x300")
         
         # Create a Label for the first slider
-        label1 = tk.Label(self.root, text="Parameter 1")
+        label1 = tk.Label(self.root, text="Line lenght percent")
         label1.grid(row=0, column=0, padx=10, pady=10)
 
         # Create the first slider
-        slider1 = ttk.Scale(self.root, from_=0, to=100, orient="horizontal")
-        slider1.grid(row=0, column=1, padx=10, pady=10)
+        self.slider1 = ttk.Scale(self.root, from_=0, to=100, orient="horizontal")
+        self.slider1.grid(row=0, column=1, padx=10, pady=10)
 
         # Create a Label for the second slider
-        label2 = tk.Label(self.root, text="Parameter 2")
+        label2 = tk.Label(self.root, text="Line thickness percent")
         label2.grid(row=1, column=0, padx=10, pady=10)
 
         # Create the second slider
-        slider2 = ttk.Scale(self.root, from_=0, to=100, orient="horizontal")
-        slider2.grid(row=1, column=1, padx=10, pady=10)
+        self.slider2 = ttk.Scale(self.root, from_=0, to=100, orient="horizontal")
+        self.slider2.grid(row=1, column=1, padx=10, pady=10)
 
         # Create a button
-        button = ttk.Button(self.root, text="Apply")
+        button = ttk.Button(self.root, text="Apply", command=self.button_click)
         button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
         
         self.root.mainloop()
-    
+        
+
     def show(self):
         pygame.init()
         
@@ -63,8 +83,13 @@ class RenderWindow:
         
         self.screenSize_loc = glGetUniformLocation(self.shader_program, "screenSize")
         
+        self.frag_ll = glGetUniformLocation(self.shader_program, "line_len")
+        self.frag_lt = glGetUniformLocation(self.shader_program, "line_thick")
+        
         tk_thread = threading.Thread(target=self._settingsWindow)
         tk_thread.start()
+        
+
 
 
         self._mainloop()
@@ -74,26 +99,29 @@ class RenderWindow:
         self.running = True
         self.start_time = time.time()
         
-        self.modified = True
+        self._set_modified(True)
+        
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                     
-            if(self.modified):
+            if(self._get_modified()):
+                with self.lock:
+                    print("sending info to frag")
+                    glUniform1f(self.frag_ll, self.ll)
+                    glUniform1f(self.frag_lt, self.lt)
+                    print("sent ll", self.ll, "lt", self.lt)
+                 
                 self.width, self.height = pygame.display.get_surface().get_size()
                 glUniform2f(self.screenSize_loc, self.width, self.height)
                 glClear(GL_COLOR_BUFFER_BIT)
-
-                current_time = time.time() - self.start_time
-                time_uniform = glGetUniformLocation(self.shader_program, "time")
-                glUniform1f(time_uniform, current_time)
     
                 glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
 
                 pygame.display.flip()
                 
-                self.modified = False
+                self._set_modified(False)
             else:
                 pass
             

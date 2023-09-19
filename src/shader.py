@@ -11,11 +11,21 @@ fragment_shader = """
 out vec4 fragColor;
 uniform vec2 screenSize;
 
+uniform float line_len;
+uniform float line_thick;
+
 void main() {
     vec2 uv = gl_FragCoord.xy / screenSize;
-    if(uv.x > 0.3 && uv.x < 0.7 && uv.y > 0.5 && uv.y < 0.505)
+
+    float min_x = 0.5-(line_len/2);
+    float max_x = 0.5+(line_len/2);
+    float min_y = 0.5-(line_thick/2);
+    float max_y = 0.5+(line_thick/2);
+    
+    if(uv.x >= min_x && uv.x <= max_x && uv.y >= min_y && uv.y <= max_y)
         fragColor = vec4(1.0, 0.0, 0.0, 1.0);
     else
-        fragColor = vec4(0.3, 0.3, 0.3, 1.0);
+        fragColor = vec4(0.1, 0.1, 0.1, 1.0);
+        
 }
 """
